@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "electron/main.js",
   "scripts": {
-    "start": "electron .",
-    "pack": "electron-builder --dir",
+    "dev": "electron .",
     "build": "electron-builder"
   },
   "devDependencies": {

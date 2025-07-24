@@ -10,6 +10,7 @@ function createWindow() {
       contextIsolation: true, // 启用上下文隔离
       preload: path.join(__dirname, 'preload.js')
     },
+    icon: path.join(__dirname, "../build/icon.ico"),
   });
 
   // 加载 Vue 打包后的文件
