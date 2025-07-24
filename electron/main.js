@@ -213,11 +213,12 @@ const showExitDialog = (win) => {
       icon: ICON_PATHS.APP, // 使用应用图标
     })
     .then((result) => {
-      if (result.response === 1) {
-        win.hide(); // 最小化
-      } else if (result.response === 2) {
-        handleAppQuit(); // 退出应用
-      }
+      const map = {
+        0: () => {}, // 取消按钮
+        1: () => win.hide(), // 最小化
+        2: () => handleAppQuit(), // 退出应用
+      };
+      map[result.response]();
     });
 };
 
