@@ -62,7 +62,7 @@ const showMainWindow = () => {
 };
 
 // 创建托盘图标和菜单
-const createTray = (win) => {
+const createTray = () => {
   // 使用正确的图标路径
   const trayIcon = createContextMenuIcon("icon.ico");
 
