@@ -1,7 +1,20 @@
 // 导入Electron核心模块和Node.js路径模块
-const { app, BrowserWindow, Menu, nativeImage, dialog } = require("electron");
+const {
+  app,
+  dialog,
+  BrowserWindow,
+  Menu,
+  nativeImage,
+  Tray,
+} = require("electron");
 const path = require("path");
 
+// 声明全局变量
+let forceQuit = false;
+let mainWindow = null; // 存储主窗口引用
+let tray = null; // 存储托盘图标引用
+
+// 应用图标路径
 const appIcon = path.join(__dirname, "../build/icon.ico");
 
 // 创建浏览器窗口的异步函数
@@ -15,10 +28,16 @@ const createWindow = async () => {
       preload: path.join(__dirname, "preload.js"), // 预加载脚本路径
     },
     icon: appIcon, // 应用图标路径
+    show: false, // 初始不显示窗口
   });
 
   // 加载本地HTML文件作为应用界面
   await win.loadURL(`file://${path.join(__dirname, "../src/index.html")}`);
+
+  // 窗口加载完成后显示
+  win.once("ready-to-show", () => {
+    win.show();
+  });
 
   // 可选：打开开发者工具（调试时使用）
   // win.webContents.openDevTools();
@@ -29,8 +48,57 @@ const createWindow = async () => {
   // 创建自定义右键菜单
   createContextMenu(win);
 
-  // 返回窗口实例（可用于后续操作）
+  // 返回窗口实例
   return win;
+};
+
+// 显示主窗口函数
+const showMainWindow = () => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+  }
+};
+
+// 创建托盘图标和菜单
+const createTray = (win) => {
+  // 使用正确的图标路径
+  const trayIcon = createContextMenuIcon("icon.ico");
+
+  // 创建托盘实例
+  tray = new Tray(trayIcon);
+
+  // 构建托盘菜单
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: "显示应用",
+      icon: createContextMenuIcon("show.png"),
+      click: () => showMainWindow(),
+    },
+    // { type: "separator" },
+    {
+      label: "退出应用",
+      icon: createContextMenuIcon("logout.png"),
+      click: () => {
+        // 设置强制退出标志，然后退出
+        forceQuit = true;
+        app.quit();
+      },
+    },
+  ]);
+
+  tray.setContextMenu(contextMenu);
+  tray.setToolTip("待办事项清单");
+
+  // 点击托盘图标显示/隐藏应用
+  // tray.on("click", () => {
+  //   if (win.isVisible()) {
+  //     win.hide();
+  //   } else {
+  //     showMainWindow();
+  //   }
+  // });
 };
 
 // 创建带图标的右键上下文菜单
@@ -42,31 +110,30 @@ const createContextMenu = (win) => {
       icon: createContextMenuIcon("refresh.png"),
       click: () => win.reload(), // 点击刷新窗口
     },
-    // 以下是可选菜单项（示例）：
-    // { label: "开发者工具", click: () => win.webContents.toggleDevTools() },
     // { type: "separator" }, // 分隔线
     {
       label: "退出应用",
       icon: createContextMenuIcon("logout.png"),
       click: () => {
-        // 显示确认对话框
         dialog
           .showMessageBox(win, {
-            // 添加win作为父窗口，确保对话框居中
             type: "question",
-            buttons: ["取消", "确定退出"],
+            buttons: ["取消", "最小化到托盘", "退出应用"],
             defaultId: 0,
             cancelId: 0,
-            title: "系统提示",
-            message: "您确定要退出应用吗？",
-            detail: "退出后将关闭所有窗口。",
-            normalizeAccessKeys: true,
-            noLink: true, // 不显示链接样式
-            icon: appIcon, // 使用应用图标
+            title: "退出选项",
+            message: "您想如何退出应用？",
+            detail: "选择'最小化到托盘'将使应用在后台继续运行",
+            noLink: true,
+            icon: appIcon,
           })
           .then((result) => {
             if (result.response === 1) {
-              // 用户点击了"确定退出"
+              // 最小化到托盘
+              win.hide();
+            } else if (result.response === 2) {
+              // 退出应用
+              forceQuit = true;
               app.quit();
             }
           });
@@ -91,22 +158,49 @@ const createContextMenuIcon = (iconPath) => {
     .resize({ width: 16, height: 16 });
 };
 
-// 应用准备就绪后的初始化
-app.whenReady().then(async () => {
-  // 创建主窗口（原注释掉的菜单功能保留说明）
-  // const mainWindow = await createWindow();
-  // createMenu(mainWindow); // 可在此创建顶部应用菜单
+// 检查是否已有实例运行
+const gotTheLock = app.requestSingleInstanceLock();
 
-  await createWindow();
+if (!gotTheLock) {
+  // 如果已有实例运行，则退出当前进程
+  app.quit();
+} else {
+  // 应用准备就绪后的初始化
+  app.whenReady().then(async () => {
+    // 创建主窗口
+    mainWindow = await createWindow();
 
-  // 处理macOS激活事件（无窗口时重新创建）
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    // 创建托盘图标
+    createTray(mainWindow);
+
+    // 处理窗口关闭事件（改为最小化到托盘）
+    mainWindow.on("close", (event) => {
+      if (!forceQuit) {
+        event.preventDefault();
+        mainWindow.hide();
+      }
+    });
+
+    // 处理macOS激活事件
+    app.on("activate", () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+      } else {
+        showMainWindow();
+      }
+    });
   });
-});
+
+  // 处理第二个实例启动
+  app.on("second-instance", () => {
+    showMainWindow();
+  });
+}
 
 // 处理所有窗口关闭事件（macOS除外）
 app.on("window-all-closed", () => {
   // macOS通常不会在关闭所有窗口时退出应用
-  if (process.platform !== "darwin") app.quit();
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
 });
