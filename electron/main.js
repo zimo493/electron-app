@@ -5,7 +5,7 @@ const path = require("path");
 const appIcon = path.join(__dirname, "../build/icon.ico");
 
 // 创建浏览器窗口的异步函数
-async function createWindow() {
+const createWindow = async () => {
   // 创建新的浏览器窗口实例
   const win = new BrowserWindow({
     width: 1280, // 窗口宽度
@@ -31,17 +31,15 @@ async function createWindow() {
 
   // 返回窗口实例（可用于后续操作）
   return win;
-}
+};
 
 // 创建带图标的右键上下文菜单
-function createContextMenu(win) {
+const createContextMenu = (win) => {
   // 构建菜单模板
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "刷新", // 菜单项标签
-      icon: nativeImage // 创建图标
-        .createFromPath(path.join(__dirname, "../build/refresh.png"))
-        .resize({ width: 16, height: 16 }), // 调整图标尺寸
+      icon: createContextMenuIcon("refresh.png"),
       click: () => win.reload(), // 点击刷新窗口
     },
     // 以下是可选菜单项（示例）：
@@ -49,9 +47,7 @@ function createContextMenu(win) {
     // { type: "separator" }, // 分隔线
     {
       label: "退出应用",
-      icon: nativeImage
-        .createFromPath(path.join(__dirname, "../build/logout.png"))
-        .resize({ width: 16, height: 16 }),
+      icon: createContextMenuIcon("logout.png"),
       click: () => {
         // 显示确认对话框
         dialog
@@ -82,7 +78,18 @@ function createContextMenu(win) {
   win.webContents.on("context-menu", () => {
     contextMenu.popup(win); // 在窗口中弹出菜单
   });
-}
+};
+
+/**
+ * 创建自定义图标
+ * @param {*} iconPath 图标路径
+ * @returns {*} 创建的图标对象
+ */
+const createContextMenuIcon = (iconPath) => {
+  return nativeImage
+    .createFromPath(path.join(__dirname, `../build/${iconPath}`))
+    .resize({ width: 16, height: 16 });
+};
 
 // 应用准备就绪后的初始化
 app.whenReady().then(async () => {
