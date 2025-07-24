@@ -1,10 +1,9 @@
 const { app, BrowserWindow, Menu } = require("electron");
 const path = require("path");
 
-// const NODE_ENV = process.env.NODE_ENV
 async function createWindow() {
   const win = new BrowserWindow({
-    width: 1200,
+    width: 1280,
     height: 800,
     webPreferences: {
       contextIsolation: true, // 启用上下文隔离
@@ -13,14 +12,12 @@ async function createWindow() {
     icon: path.join(__dirname, "../build/icon.ico"),
   });
 
-  // 加载 Vue 打包后的文件
+  // 加载 Vue 打包后的产物
   // win.loadFile(path.join(__dirname, "src", "index.html"));
   await win.loadURL(`file://${path.join(__dirname, "../src/index.html")}`);
-  Menu.setApplicationMenu(null);
+  Menu.setApplicationMenu(null); // 移除菜单栏
   // 打开开发工具
-  // if (NODE_ENV === "development") {
-  //   mainWindow.webContents.openDevTools();
-  // }
+  // win.webContents.openDevTools();
 }
 
 app.whenReady().then(async () => {
