@@ -31,11 +31,8 @@ pnpm install
 # 启动开发服务器
 pnpm dev
 
-# 构建生产版本
-pnpm build
-
 # 打包应用程序
-pnpm package
+pnpm build
 ```
 
 ## 项目结构
