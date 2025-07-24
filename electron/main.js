@@ -1,5 +1,5 @@
 // 导入Electron核心模块和Node.js路径模块
-const { app, BrowserWindow, Menu, nativeImage } = require("electron");
+const { app, BrowserWindow, Menu, nativeImage, dialog } = require("electron");
 const path = require("path");
 
 // 创建浏览器窗口的异步函数
@@ -50,7 +50,29 @@ function createContextMenu(win) {
       icon: nativeImage
         .createFromPath(path.join(__dirname, "../build/logout.png"))
         .resize({ width: 16, height: 16 }),
-      click: () => app.quit(), // 点击退出应用
+      click: () => {
+        // 显示确认对话框
+        dialog
+          .showMessageBox(win, {
+            // 添加win作为父窗口，确保对话框居中
+            type: "question",
+            buttons: ["取消", "确定退出"],
+            defaultId: 0,
+            cancelId: 0,
+            title: "系统提示",
+            message: "您确定要退出应用吗？",
+            detail: "退出后将关闭所有窗口。",
+            normalizeAccessKeys: true,
+            noLink: true, // 不显示链接样式
+            icon: path.join(__dirname, "../build/icon.ico"), // 使用应用图标
+          })
+          .then((result) => {
+            if (result.response === 1) {
+              // 用户点击了"确定退出"
+              app.quit();
+            }
+          });
+      },
     },
   ]);
 
