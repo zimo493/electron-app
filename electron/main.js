@@ -21,7 +21,7 @@ const appIcon = path.join(__dirname, "../build/icon.ico");
 const createWindow = async () => {
   // 创建新的浏览器窗口实例
   const win = new BrowserWindow({
-    width: 1280, // 窗口宽度
+    width: 1200, // 窗口宽度
     height: 800, // 窗口高度
     webPreferences: {
       contextIsolation: true, // 启用上下文隔离，增强安全性
