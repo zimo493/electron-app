@@ -1,0 +1,36 @@
+{
+  "name": "electron-app",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "^37.2.3",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.your-website.your-app",
+    "productName": "App",
+    "copyright": "Copyright © 2021 <your-name>",
+    "icon": "build/icon.ico",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "files": [
+      "src/**/*",
+      "electron/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist_electron"
+    }
+  }
+}
