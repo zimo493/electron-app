@@ -12,9 +12,9 @@
     "electron-builder": "^26.0.12"
   },
   "build": {
-    "appId": "com.your-website.your-app",
-    "productName": "App",
-    "copyright": "Copyright © 2021 <your-name>",
+    "appId": "com.zimo.todo",
+    "productName": "待办事项清单",
+    "copyright": "Copyright © 2025 zimo",
     "icon": "build/icon.ico",
     "mac": {
       "category": "public.app-category.utilities"
