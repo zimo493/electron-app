@@ -15,6 +15,7 @@ const ICON_PATHS = {
   REFRESH: path.join(ICON_DIR, "refresh.png"),
   LOGOUT: path.join(ICON_DIR, "logout.png"),
   SHOW: path.join(ICON_DIR, "show.png"),
+  CONSOLE: path.join(ICON_DIR, "console.png"),
 };
 const ICON_SIZE = { width: 16, height: 16 };
 const WINDOW_DEFAULT_SIZE = { width: 1200, height: 800 };
@@ -133,8 +134,8 @@ const createContextMenu = (win) => {
     // { type: "separator" },
     // {
     //   label: "开发者工具",
-    //   click: () => win.webContents.openDevTools({ mode: "detach" }),
-    //   accelerator: "CmdOrCtrl+Shift+I",
+    //   icon: createContextMenuIcon(ICON_PATHS.CONSOLE),
+    //   click: () => win.webContents.openDevTools({ mode: "detach" }), // 设置开发者工具打开方式（与主窗口分离）
     // },
     // { type: "separator" },
     {
