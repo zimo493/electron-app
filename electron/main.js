@@ -2,6 +2,8 @@
 const { app, BrowserWindow, Menu, nativeImage, dialog } = require("electron");
 const path = require("path");
 
+const appIcon = path.join(__dirname, "../build/icon.ico");
+
 // 创建浏览器窗口的异步函数
 async function createWindow() {
   // 创建新的浏览器窗口实例
@@ -12,7 +14,7 @@ async function createWindow() {
       contextIsolation: true, // 启用上下文隔离，增强安全性
       preload: path.join(__dirname, "preload.js"), // 预加载脚本路径
     },
-    icon: path.join(__dirname, "../build/icon.ico"), // 应用图标路径
+    icon: appIcon, // 应用图标路径
   });
 
   // 加载本地HTML文件作为应用界面
@@ -64,7 +66,7 @@ function createContextMenu(win) {
             detail: "退出后将关闭所有窗口。",
             normalizeAccessKeys: true,
             noLink: true, // 不显示链接样式
-            icon: path.join(__dirname, "../build/icon.ico"), // 使用应用图标
+            icon: appIcon, // 使用应用图标
           })
           .then((result) => {
             if (result.response === 1) {
