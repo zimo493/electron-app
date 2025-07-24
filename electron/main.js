@@ -111,6 +111,12 @@ const createContextMenu = (win) => {
       click: () => win.reload(), // 点击刷新窗口
     },
     // { type: "separator" }, // 分隔线
+    // 开发者工具，开发环境可打开
+    // {
+    //   label: "开发者工具",
+    //   icon: createContextMenuIcon("console.png"),
+    //   click: () => win.webContents.openDevTools(),
+    // },
     {
       label: "退出应用",
       icon: createContextMenuIcon("logout.png"),
