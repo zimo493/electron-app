@@ -22,7 +22,12 @@ const ICON_PATHS = {
 /** 图标大小 */
 const ICON_SIZE = { width: 16, height: 16 };
 /** 窗口默认大小 */
-const WINDOW_DEFAULT_SIZE = { width: 1200, height: 800 };
+const WINDOW_DEFAULT_SIZE = {
+  width: 1200, // 默认窗口宽度
+  height: 800, // 默认窗口高度
+  minWidth: 1000, // 最小宽度
+  minHeight: 600, // 最小高度
+};
 
 /**
  * 应用全局状态
@@ -54,7 +59,7 @@ const createWindow = async () => {
         preload: path.join(__dirname, "preload.js"), // 预加载脚本
       },
       icon: ICON_PATHS.APP, // 设置窗口图标
-      show: false, // 初始隐藏等待加载完成
+      // show: false, // 初始隐藏等待加载完成
     });
 
     await win.loadURL(`file://${path.join(__dirname, "../src/index.html")}`);
