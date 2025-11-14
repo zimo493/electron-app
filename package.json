@@ -14,7 +14,7 @@
     "appId": "com.zimo.todo",
     "productName": "待办事项清单",
     "copyright": "Copyright © 2025 zimo",
-    "icon": "build/icon.ico",
+    "icon": "build/favicon.ico",
     "mac": {
       "category": "public.app-category.utilities"
     },
